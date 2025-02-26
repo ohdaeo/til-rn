@@ -1,5 +1,6 @@
 import React from 'react';
 import {ActivityIndicator, SafeAreaView, StyleSheet, View} from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
 import WebView from 'react-native-webview';
 
 /*
@@ -11,6 +12,8 @@ import WebView from 'react-native-webview';
 
 const App = (): JSX.Element => {
   const webViewUrl = 'http://naver.com/';
+
+  // Splash Screen 적용
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,6 +27,13 @@ const App = (): JSX.Element => {
             {/* 로딩 스피너 컴포넌트 */}
           </View>
         )}
+        // 로딩 완료
+        onLoad={() => {
+          console.log('로딩완료');
+          setTimeout(() => {
+            SplashScreen.hide();
+          }, 1000);
+        }}
         style={styles.webview}
       />
     </SafeAreaView>

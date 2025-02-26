@@ -1,53 +1,103 @@
 ![React Native](https://velog.velcdn.com/images/imysh578/post/1f54af4b-6908-44fd-9072-3542ab10fe36/image.png)
 
-# Web View
+# Splash Screen
 
-- [Web View](https://www.npmjs.com/package/react-native-webview)
-- `npm i react-native-webview`
+[splash screen](https://til-choonham.tistory.com/530)
+[github splash screen](https://github.com/crazycodeboy/react-native-splash-screen)
+[npm splash screen](https://www.npmjs.com/package/react-native-splash-screen)
 
-### 기본예제
-
-```tsx
-import React from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
-import WebView from 'react-native-webview';
-
-/*
-  SafeAreaView - 상단 툴바(시간, 배터리 용량을 나타내는 부분)를 제외한 스크린 사이즈를 의미
-  View - UI를 구축하는 데 가장 기본적인 구성 요소
-
- */
-
-const App = (): JSX.Element => {
-  const webViewUrl = 'http://naver.com/';
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <WebView source={{uri: webViewUrl}} style={styles.webview} />
-    </SafeAreaView>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  webview: {
-    flex: 1,
-  },
-});
-
-export default App;
+```bash
+npm i react-native-splash-screen
 ```
 
-### 응용예제 (로딩화면 구현)
+### android (MainActivity.java) 수정
 
-[데이터 로딩 UI](https://velog.io/@ttoottie/RN-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A1%9C%EB%94%A9-UI%EB%A5%BC-%EC%9E%90%EC%97%B0%EC%8A%A4%EB%9F%BD%EA%B2%8C-%EA%B5%AC%EC%84%B1%ED%95%B4%EB%B3%B4%EC%9E%90)
+- android\app\src\main\java\com\앱이름\MainActivity.java
+
+```java
+package com.rntil;
+
+import android.os.Bundle; // here
+
+import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
+import com.facebook.react.defaults.DefaultReactActivityDelegate;
+
+// react-native-splash-screen >= 0.3.1
+import org.devio.rn.splashscreen.SplashScreen; // here
+
+public class MainActivity extends ReactActivity {
+
+  /**
+   * Returns the name of the main component registered from JavaScript. This is used to schedule
+   * rendering of the component.
+   */
+  @Override
+  protected String getMainComponentName() {
+    return "rntil";
+  }
+
+  /**
+   * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
+   * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React
+   * (aka React 18) with two boolean flags.
+   */
+  @Override
+  protected ReactActivityDelegate createReactActivityDelegate() {
+    return new DefaultReactActivityDelegate(
+        this,
+        getMainComponentName(),
+        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+        DefaultNewArchitectureEntryPoint.getFabricEnabled());
+  }
+  // here
+  @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.show(this);  // here
+        super.onCreate(savedInstanceState);
+    }
+}
+
+```
+
+### Splash Screen 이미지
+
+- 900 \* 900 .png
+- android\app\src\main\res\drawable\launch_screen.png
+  저장
+
+**launch_screen.xml 파일 생성 및 배치**
+
+- android/app/src/main/res/layout 폴더 생성
+- android/app/src/main/res/layout/launch_screen.xml 파일 생성
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/launch_screen" android:scaleType="centerCrop" />
+</RelativeLayout>
+```
+
+**colors.xml 파일 생성 및 배치**
+
+- android/app/src/main/res/values/colors.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_dark">#000000</color>
+</resources>
+```
+
+### App.tsx 적용
 
 ```tsx
 import React from 'react';
 import {ActivityIndicator, SafeAreaView, StyleSheet, View} from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
 import WebView from 'react-native-webview';
 
 /*
@@ -59,6 +109,8 @@ import WebView from 'react-native-webview';
 
 const App = (): JSX.Element => {
   const webViewUrl = 'http://naver.com/';
+
+  // Splash Screen 적용
 
   return (
     <SafeAreaView style={styles.container}>
@@ -72,6 +124,13 @@ const App = (): JSX.Element => {
             {/* 로딩 스피너 컴포넌트 */}
           </View>
         )}
+        // 로딩 완료
+        onLoad={() => {
+          console.log('로딩완료');
+          setTimeout(() => {
+            SplashScreen.hide();
+          }, 1000);
+        }}
         style={styles.webview}
       />
     </SafeAreaView>
@@ -94,7 +153,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: '#fff',
   },
 });
 

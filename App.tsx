@@ -1,5 +1,12 @@
-import React from 'react';
-import {ActivityIndicator, SafeAreaView, StyleSheet, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  BackHandler,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import WebView from 'react-native-webview';
 
@@ -13,7 +20,21 @@ import WebView from 'react-native-webview';
 const App = (): JSX.Element => {
   const webViewUrl = 'http://naver.com/';
 
-  // Splash Screen 적용
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('앱 종료', '앱을 종료 하시겠습니까?', [
+        {text: '취소', onPress: () => null, style: 'cancel'},
+        {text: '종료', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true; // 뒤로가기 방지
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove(); // 앱 종료시 이벤트 리스너 정리
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

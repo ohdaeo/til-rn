@@ -1,3 +1,5 @@
+![React Native](https://velog.velcdn.com/images/imysh578/post/1f54af4b-6908-44fd-9072-3542ab10fe36/image.png)
+
 # React Native
 
 - React를 기반으로 만들어진 `javascript` 기반의 프레임워크로, 크로스 플랫폼 앱 개발에 사용된다.
@@ -184,8 +186,3 @@ npx react-native@0.72.6 init 앱이름 --version 0.72.6
 npm run start
 a # run on Android 란 의미
 ```
-
-### Web View
-
-- [Web View](https://www.npmjs.com/package/react-native-webview)
-- `npm i react-native-webview`
